@@ -36,6 +36,9 @@ class testApp : public ofBaseApp{
         bool showSassi;
         bool showSteli;
 
+        ofMesh sassi;
+        ofMesh basi;
+
         ofPoint centro;
         vector <ofPoint> cloud;
         vector <ofPoint> shadow;
@@ -50,6 +53,8 @@ class testApp : public ofBaseApp{
         float prevRaggioExt;
         float prevRaggioInt;
         float prevBaseh;
+        float raggioh;
+        float prevRaggioh;
 
         float shadowPointRadius;
 

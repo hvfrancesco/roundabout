@@ -6,7 +6,7 @@ void testApp::setup()
 
     // this uses depth information for occlusion
     // rather than always drawing things on top of each other
-    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_DEPTH_TEST);
     ofEnableAlphaBlending();
 
     isSetup = true;
@@ -32,6 +32,7 @@ void testApp::setup()
     distx = prevDistx = 0.5;
     disty = prevDisty = 0.5;
     shadowPointRadius = 0.02;
+    raggioh = prevRaggioh = 0.0;
 
     // this sets the camera's distance from the object
     cam.setDistance(cameraDistance);
@@ -60,12 +61,16 @@ void testApp::setup()
     gui.addSlider("altezza base", baseh, 0.0, 3.0);
     gui.addSlider("altezza min", minh, 0.0, 1.0);
     gui.addSlider("altezza max", maxh, 0.0, 5.0);
+    gui.addSlider("influenza raggio", raggioh, -1.0, 1.0);
     gui.addSlider("spaziatura x", distx, 0.0, 0.5);
     gui.addSlider("spaziatura y", disty, 0.0, 0.5);
 
 
     gui.show();
     cam.disableMouseInput();
+
+    sassi.setMode(OF_PRIMITIVE_POINTS);
+    basi.setMode(OF_PRIMITIVE_POINTS);
 
     shadow.clear();
     cloud.clear();
@@ -91,7 +96,8 @@ void testApp::setup()
             }
         }
     }
-
+    basi.addVertices(shadow);
+    sassi.addVertices(cloud);
 }
 
 //--------------------------------------------------------------
@@ -101,11 +107,13 @@ void testApp::update()
     // this sets the camera's distance from the object
     cam.setDistance(cameraDistance);
 
-    if (distx != prevDistx || disty != prevDisty || raggioExt != prevRaggioExt || raggioInt != prevRaggioInt || baseh != prevBaseh)
+    if (distx != prevDistx || disty != prevDisty || raggioExt != prevRaggioExt || raggioInt != prevRaggioInt || baseh != prevBaseh || raggioh != prevRaggioh)
     {
 
         shadow.clear();
         cloud.clear();
+        basi.clear();
+        sassi.clear();
         for(float i=0; i<raggioExt*2; i += distx)
         {
             for(float j=0; j<raggioExt*2; j += disty)
@@ -113,7 +121,9 @@ void testApp::update()
                 float x = i-raggioExt;
                 float y = j-raggioExt;
 
-                if((ofDist(x, y,centro.x, centro.y) <= raggioExt) && (ofDist(x, y,centro.x, centro.y) >= raggioInt))
+                float distCentro = ofDist(x, y,centro.x, centro.y);
+
+                if(distCentro <= raggioExt && distCentro >= raggioInt)
                 {
                     ofPoint puntoBase;
                     ofPoint puntoSasso;
@@ -122,21 +132,21 @@ void testApp::update()
                     puntoBase.z = 0;
                     puntoSasso.x = x;
                     puntoSasso.y = y;
-                    puntoSasso.z = baseh;
+                    puntoSasso.z = baseh + (distCentro * raggioh);
+
                     shadow.push_back(puntoBase);
                     cloud.push_back(puntoSasso);
                 }
             }
         }
-
-
-
-
+        basi.addVertices(shadow);
+        sassi.addVertices(cloud);
         prevDistx = distx;
         prevDisty = disty;
         prevRaggioExt = raggioExt;
         prevRaggioInt = raggioInt;
         prevBaseh = baseh;
+        prevRaggioh = raggioh;
     }
 
 
@@ -151,6 +161,7 @@ void testApp::draw()
     ofNoFill();
     ofSetColor(255,255,255,255);
     ofSetLineWidth(1.2);
+    ofSetCircleResolution(100);
     // disegna limite rotonda
     ofCircle(centro.x,centro.y,raggioRotonda);
 
@@ -170,6 +181,8 @@ void testApp::draw()
     if (showBasePoints)
     {
         // disegna punti di base
+        /*
+        ofSetCircleResolution(10);
         ofSetColor(0,0,0,200);
         ofSetLineWidth(0.25);
         for(int i=0; i<shadow.size(); i++)
@@ -180,6 +193,12 @@ void testApp::draw()
             ofPopMatrix();
             //ofCircle(shadow[i].x, shadow[i].y, shadowPointRadius);
         }
+        */
+        ofSetColor(0,0,0,200);
+        glPointSize(1);
+        glEnable(GL_DEPTH_TEST);
+        basi.drawVertices();
+        glDisable(GL_DEPTH_TEST);
     }
 
     if (showSteli)
@@ -205,6 +224,8 @@ void testApp::draw()
     if (showSassi)
     {
         // disegna sassi
+        /*
+        ofSetCircleResolution(10);
         ofSetColor(255,255,255,200);
         ofSetLineWidth(0.15);
         for(int i=0; i<cloud.size(); i++)
@@ -214,6 +235,13 @@ void testApp::draw()
             ofCircle(0, 0, shadowPointRadius);
             ofPopMatrix();
         }
+        */
+        ofSetColor(255,255,255,200);
+        glPointSize(2);
+        glEnable(GL_DEPTH_TEST);
+        sassi.drawVertices();
+        glDisable(GL_DEPTH_TEST);
+
     }
 
 
