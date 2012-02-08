@@ -1,0 +1,34 @@
+<controls>
+    <SliderFloat_raggio_esterno>
+        <name>raggio esterno</name>
+        <value>14.85</value>
+    </SliderFloat_raggio_esterno>
+    <SliderFloat_raggio_interno>
+        <name>raggio interno</name>
+        <value>10.62</value>
+    </SliderFloat_raggio_interno>
+    <SliderFloat_distanza_camera>
+        <name>distanza camera</name>
+        <value>26.4375</value>
+    </SliderFloat_distanza_camera>
+    <SliderFloat_altezza_base>
+        <name>altezza base</name>
+        <value>2.6325</value>
+    </SliderFloat_altezza_base>
+    <SliderFloat_altezza_min>
+        <name>altezza min</name>
+        <value>0.2475</value>
+    </SliderFloat_altezza_min>
+    <SliderFloat_altezza_max>
+        <name>altezza max</name>
+        <value>4</value>
+    </SliderFloat_altezza_max>
+    <SliderFloat_spaziatura_x>
+        <name>spaziatura x</name>
+        <value>0.17625</value>
+    </SliderFloat_spaziatura_x>
+    <SliderFloat_spaziatura_y>
+        <name>spaziatura y</name>
+        <value>0.34125</value>
+    </SliderFloat_spaziatura_y>
+</controls>
