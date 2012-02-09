@@ -25,6 +25,8 @@ obj/
 /bin/data/*blu*.xml
 /bin/data/*alpha*.xml
 /bin/data/*trigger*.xml
+/bin/data/*dist*.xml
+/bin/data/*spaz*.xml
 /bin/data/*elementPosition*.xml
 /bin/data/defaultTimeline*.xml
 /bin/data/video/house*
