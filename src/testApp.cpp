@@ -24,8 +24,8 @@ void testApp::setup()
     centro.z = 0.0;
 
     raggioRotonda = 15.75;
-    raggioExt = prevRaggioExt = raggioRotonda-0.5;
-    raggioInt = prevRaggioInt = 0.0;
+    raggioExt = prevRaggioExt = raggioRotonda-0.75;
+    raggioInt = prevRaggioInt = 10.0;
     cameraDistance = raggioExt*2;
     baseh = prevBaseh = 0.5;
     minh = prevMinh = 0.25;
@@ -61,7 +61,7 @@ void testApp::setup()
     gui.addSlider("raggio esterno", raggioExt, 5.0, 25.0);
     gui.addSlider("raggio interno", raggioInt, 0.0, 24.0);
     gui.addSlider("distanza camera", cameraDistance, 5.0, 250.0);
-    gui.addSlider("altezza base", baseh, 0.0, 3.0);
+    gui.addSlider("altezza base", baseh, 0.0, 10.0);
     gui.addSlider("altezza min", minh, 0.0, 1.0);
     gui.addSlider("altezza max", maxh, 0.0, 5.0);
     gui.addTitle("distanza dal centro");
@@ -105,6 +105,8 @@ void testApp::setup()
     }
     basi.addVertices(shadow);
     sassi.addVertices(cloud);
+
+    ofBackground(120,100,100);
 }
 
 //--------------------------------------------------------------

@@ -1,46 +1,46 @@
 <controls>
     <SliderFloat_raggio_esterno>
         <name>raggio esterno</name>
-        <value>15.25</value>
+        <value>15</value>
     </SliderFloat_raggio_esterno>
     <SliderFloat_raggio_interno>
         <name>raggio interno</name>
-        <value>10.98</value>
+        <value>10</value>
     </SliderFloat_raggio_interno>
     <SliderFloat_distanza_camera>
         <name>distanza camera</name>
-        <value>26.4375</value>
+        <value>23.9875</value>
     </SliderFloat_distanza_camera>
     <SliderFloat_altezza_base>
         <name>altezza base</name>
-        <value>2.6625</value>
+        <value>4.475</value>
     </SliderFloat_altezza_base>
     <SliderFloat_altezza_min>
         <name>altezza min</name>
-        <value>0.1375</value>
+        <value>0.25</value>
     </SliderFloat_altezza_min>
     <SliderFloat_altezza_max>
         <name>altezza max</name>
-        <value>5</value>
+        <value>4.9375</value>
     </SliderFloat_altezza_max>
     <SliderFloat_influenza_raggio>
         <name>influenza raggio</name>
-        <value>-0.675</value>
+        <value>-0.705</value>
     </SliderFloat_influenza_raggio>
     <SliderFloat_esponente>
         <name>esponente</name>
-        <value>0.555</value>
+        <value>-1.455</value>
     </SliderFloat_esponente>
     <SliderFloat_influenza>
         <name>influenza</name>
-        <value>0.6125</value>
+        <value>0.7375</value>
     </SliderFloat_influenza>
     <SliderFloat_spaziatura_x>
         <name>spaziatura x</name>
-        <value>0.34375</value>
+        <value>0.5</value>
     </SliderFloat_spaziatura_x>
     <SliderFloat_spaziatura_y>
         <name>spaziatura y</name>
-        <value>0.23375</value>
+        <value>0.15125</value>
     </SliderFloat_spaziatura_y>
 </controls>
