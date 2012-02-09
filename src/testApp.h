@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxSimpleGuiToo.h"
+#include "DepthExporter.h"
 
 class testApp : public ofBaseApp{
 
@@ -20,6 +21,7 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		void updateCloud();
+		void esportaFile();
 
 		ofEasyCam cam; // add mouse controls for camera movement
 
@@ -37,6 +39,8 @@ class testApp : public ofBaseApp{
         bool showBasePoints;
         bool showSassi;
         bool showSteli;
+
+        DepthExporter esporta;
 
         ofMesh sassi;
         ofMesh basi;

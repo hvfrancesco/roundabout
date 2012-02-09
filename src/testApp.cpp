@@ -267,7 +267,14 @@ void testApp::updateCloud()
 
 }
 
+//--------------------------------------------------------------
 
+void testApp::esportaFile()
+{
+
+    esporta.exportSassi(ofToString("roundabout.pcd"), cloud);
+    esporta.exportSassi(ofToString("roundabout.csv"), cloud);
+}
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key)
@@ -304,6 +311,10 @@ void testApp::keyPressed(int key)
 
     case 'a':
         showSteli = !showSteli;
+        break;
+
+    case ' ':
+        esportaFile();
         break;
         //case 'g':
         //    gui.toggleDraw();
