@@ -1,12 +1,18 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxSimpleGuiToo.h"
+//#include "ofxSimpleGuiToo.h"
+#include "ofxUI.h"
 #include "DepthExporter.h"
 
 class testApp : public ofBaseApp{
 
 	public:
+
+        ofxUICanvas *gui;
+        void exit();
+        void guiEvent(ofxUIEventArgs &e);
+
 		void setup();
 		void update();
 		void draw();
@@ -52,22 +58,11 @@ class testApp : public ofBaseApp{
         float baseh;
         float minh;
         float maxh;
-        float prevMinh;
-        float prevMaxh;
         float distx;
         float disty;
-        float prevDistx;
-        float prevDisty;
-        float prevRaggioExt;
-        float prevRaggioInt;
-        float prevBaseh;
         float raggioh;
-        float prevRaggioh;
         float esponenteRaggio;
-        float prevEsponenteRaggio;
         float influenzaRaggio;
-        float prevInfluenzaRaggio;
-
         float shadowPointRadius;
 
 };

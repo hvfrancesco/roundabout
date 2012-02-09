@@ -24,18 +24,18 @@ void testApp::setup()
     centro.z = 0.0;
 
     raggioRotonda = 15.75;
-    raggioExt = prevRaggioExt = raggioRotonda-0.75;
-    raggioInt = prevRaggioInt = 10.0;
+    raggioExt =  raggioRotonda-0.75;
+    raggioInt = 10.0;
     cameraDistance = raggioExt*2;
-    baseh = prevBaseh = 0.5;
-    minh = prevMinh = 0.25;
-    maxh = prevMaxh = 4.0;
-    distx = prevDistx = 0.5;
-    disty = prevDisty = 0.5;
+    baseh = 0.5;
+    minh = 0.25;
+    maxh = 4.0;
+    distx = 0.5;
+    disty = 0.5;
     shadowPointRadius = 0.02;
-    raggioh = prevRaggioh = 0.0;
-    esponenteRaggio = prevEsponenteRaggio = 1.0;
-    influenzaRaggio = prevInfluenzaRaggio = 0.0;
+    raggioh = 0.0;
+    esponenteRaggio = 1.0;
+    influenzaRaggio = 0.0;
 
     // this sets the camera's distance from the object
     cam.setDistance(cameraDistance);
@@ -44,36 +44,24 @@ void testApp::setup()
 
     // GUI STUFF ---------------------------------------------------
 
-    // general page
-    gui.addTitle("rotonda Raucedo");
-    // overriding default theme
-    //gui.bDrawHeader = false;
-    gui.config->toggleHeight = 16;
-    gui.config->buttonHeight = 18;
-    gui.config->sliderTextHeight = 18;
-    gui.config->titleHeight = 18;
-    //gui.config->fullActiveColor = 0x6B404B;
-    //gui.config->fullActiveColor = 0x5E4D3E;
-    gui.config->fullActiveColor = 0x648B96;
-    gui.config->textColor = 0xFFFFFF;
-    gui.config->textBGOverColor = 0xDB6800;
+    gui = new ofxUICanvas(5,5,320,500);		//ofxUICanvas(float x, float y, float width, float height)
+    gui->addWidgetDown(new ofxUILabel("rotonda Raucedo", OFX_UI_FONT_SMALL));
+    gui->addWidgetDown(new ofxUISlider(304,10,5.0,25.0,raggioExt,"RAGGIO EXT"));
+    gui->addWidgetDown(new ofxUISlider(304,10,0.0,24.0,raggioInt,"RAGGIO INT"));
+    gui->addWidgetDown(new ofxUISlider(304,10,5.0,250.0,cameraDistance,"CAMERA DIST"));
+    gui->addWidgetDown(new ofxUISlider(304,10,0.0,10.0,baseh,"BASEH"));
+    gui->addWidgetDown(new ofxUISlider(304,10,0.0,1.0,minh,"HMIN"));
+    gui->addWidgetDown(new ofxUISlider(304,10,0.0,5.0,maxh,"HMAX"));
+    gui->addWidgetDown(new ofxUILabel("distanza dal centro", OFX_UI_FONT_SMALL));
+    gui->addWidgetDown(new ofxUISlider(304,10,-1.0,1.0,raggioh,"INFLU RAGGIO"));
+    gui->addWidgetDown(new ofxUISlider(304,10,-3.0,3.0,esponenteRaggio,"EXP"));
+    gui->addWidgetDown(new ofxUISlider(304,10,0.0,1.0,influenzaRaggio,"INTENS RAGGIO"));
+    gui->addWidgetDown(new ofxUILabel("spaziatura", OFX_UI_FONT_SMALL));
+    gui->addWidgetDown(new ofxUISlider(304,10,0.0,0.5,distx,"SPAZ X"));
+    gui->addWidgetDown(new ofxUISlider(304,10,0.0,0.5,disty,"SPAZ Y"));
 
-    gui.addSlider("raggio esterno", raggioExt, 5.0, 25.0);
-    gui.addSlider("raggio interno", raggioInt, 0.0, 24.0);
-    gui.addSlider("distanza camera", cameraDistance, 5.0, 250.0);
-    gui.addSlider("altezza base", baseh, 0.0, 10.0);
-    gui.addSlider("altezza min", minh, 0.0, 1.0);
-    gui.addSlider("altezza max", maxh, 0.0, 5.0);
-    gui.addTitle("distanza dal centro");
-    gui.addSlider("influenza raggio", raggioh, -1.0, 1.0);
-    gui.addSlider("esponente", esponenteRaggio, -3.0, 3.0);
-    gui.addSlider("influenza", influenzaRaggio, 0.0, 1.0);
-    gui.addTitle("spaziatura griglia");
-    gui.addSlider("spaziatura x", distx, 0.0, 0.5);
-    gui.addSlider("spaziatura y", disty, 0.0, 0.5);
+    ofAddListener(gui->newGUIEvent, this, &testApp::guiEvent);
 
-
-    gui.show();
     cam.disableMouseInput();
 
     sassi.setMode(OF_PRIMITIVE_POINTS);
@@ -109,17 +97,86 @@ void testApp::setup()
     ofBackground(120,100,100);
 }
 
+
+//--------------------------------------------------------------
+void testApp::guiEvent(ofxUIEventArgs &e)
+{
+    if(e.widget->getName() == "RAGGIO EXT")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        raggioExt = slider->getScaledValue();
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "RAGGIO INT")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        raggioInt = slider->getScaledValue();
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "CAMERA DIST")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        cameraDistance = slider->getScaledValue();
+    }
+    else if(e.widget->getName() == "BASEH")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        baseh = slider->getScaledValue();
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "HMIN")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        minh = slider->getScaledValue();
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "HMAX")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        maxh = slider->getScaledValue();
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "INFLU RAGGIO")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        raggioh = slider->getScaledValue();
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "EXP")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        esponenteRaggio = slider->getScaledValue();
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "INTENS RAGGIO")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        influenzaRaggio = slider->getScaledValue();
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "SPAZ X")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        distx = slider->getScaledValue();
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "SPAZ Y")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        disty = slider->getScaledValue();
+        isChanged = true;
+    }
+}
+
+
+
+
 //--------------------------------------------------------------
 void testApp::update()
 {
 
     // this sets the camera's distance from the object
     cam.setDistance(cameraDistance);
-
-    if (distx != prevDistx || disty != prevDisty || raggioExt != prevRaggioExt || raggioInt != prevRaggioInt || baseh != prevBaseh || raggioh != prevRaggioh || esponenteRaggio != prevEsponenteRaggio || influenzaRaggio != prevInfluenzaRaggio || minh != prevMinh || maxh != prevMaxh)
-    {
-        isChanged = true;
-    }
 
     // update point-cloud if necessary
     updateCloud();
@@ -199,13 +256,6 @@ void testApp::draw()
     msg += "\nfps: " + ofToString(ofGetFrameRate(), 2);
     ofDrawBitmapString(msg, 10, ofGetHeight()-50);
 
-    if (isSetup)
-    {
-        // draws gui
-        gui.draw();
-    }
-
-
 }
 
 
@@ -251,21 +301,19 @@ void testApp::updateCloud()
         }
         basi.addVertices(shadow);
         sassi.addVertices(cloud);
-        prevDistx = distx;
-        prevDisty = disty;
-        prevRaggioExt = raggioExt;
-        prevRaggioInt = raggioInt;
-        prevBaseh = baseh;
-        prevRaggioh = raggioh;
-        prevEsponenteRaggio = esponenteRaggio;
-        prevInfluenzaRaggio = influenzaRaggio;
-        prevMinh = minh;
-        prevMaxh = maxh;
 
         isChanged = false;
     }
 
 }
+
+//--------------------------------------------------------------
+void testApp::exit()
+{
+    delete gui;
+}
+
+
 
 //--------------------------------------------------------------
 
@@ -289,7 +337,7 @@ void testApp::keyPressed(int key)
             cam.disableMouseInput();
         }
         else cam.enableMouseInput();
-        gui.toggleDraw();
+        gui->toggleVisible();
         break;
 
     case 'F':
