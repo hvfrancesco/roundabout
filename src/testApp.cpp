@@ -9,6 +9,7 @@ void testApp::setup()
     //glEnable(GL_DEPTH_TEST);
     ofEnableAlphaBlending();
 
+    isChanged = false;
     isSetup = true;
     showCircles = true;
     showBasePoints = true;
@@ -27,12 +28,14 @@ void testApp::setup()
     raggioInt = prevRaggioInt = 0.0;
     cameraDistance = raggioExt*2;
     baseh = prevBaseh = 0.5;
-    minh = 0.25;
-    maxh = 4.0;
+    minh = prevMinh = 0.25;
+    maxh = prevMaxh = 4.0;
     distx = prevDistx = 0.5;
     disty = prevDisty = 0.5;
     shadowPointRadius = 0.02;
     raggioh = prevRaggioh = 0.0;
+    esponenteRaggio = prevEsponenteRaggio = 1.0;
+    influenzaRaggio = prevInfluenzaRaggio = 0.0;
 
     // this sets the camera's distance from the object
     cam.setDistance(cameraDistance);
@@ -42,7 +45,7 @@ void testApp::setup()
     // GUI STUFF ---------------------------------------------------
 
     // general page
-    gui.addTitle("Raucedo - concorso rotonda");
+    gui.addTitle("rotonda Raucedo");
     // overriding default theme
     //gui.bDrawHeader = false;
     gui.config->toggleHeight = 16;
@@ -61,7 +64,11 @@ void testApp::setup()
     gui.addSlider("altezza base", baseh, 0.0, 3.0);
     gui.addSlider("altezza min", minh, 0.0, 1.0);
     gui.addSlider("altezza max", maxh, 0.0, 5.0);
+    gui.addTitle("distanza dal centro");
     gui.addSlider("influenza raggio", raggioh, -1.0, 1.0);
+    gui.addSlider("esponente", esponenteRaggio, -3.0, 3.0);
+    gui.addSlider("influenza", influenzaRaggio, 0.0, 1.0);
+    gui.addTitle("spaziatura griglia");
     gui.addSlider("spaziatura x", distx, 0.0, 0.5);
     gui.addSlider("spaziatura y", disty, 0.0, 0.5);
 
@@ -107,49 +114,13 @@ void testApp::update()
     // this sets the camera's distance from the object
     cam.setDistance(cameraDistance);
 
-    if (distx != prevDistx || disty != prevDisty || raggioExt != prevRaggioExt || raggioInt != prevRaggioInt || baseh != prevBaseh || raggioh != prevRaggioh)
+    if (distx != prevDistx || disty != prevDisty || raggioExt != prevRaggioExt || raggioInt != prevRaggioInt || baseh != prevBaseh || raggioh != prevRaggioh || esponenteRaggio != prevEsponenteRaggio || influenzaRaggio != prevInfluenzaRaggio || minh != prevMinh || maxh != prevMaxh)
     {
-
-        shadow.clear();
-        cloud.clear();
-        basi.clear();
-        sassi.clear();
-        for(float i=0; i<raggioExt*2; i += distx)
-        {
-            for(float j=0; j<raggioExt*2; j += disty)
-            {
-                float x = i-raggioExt;
-                float y = j-raggioExt;
-
-                float distCentro = ofDist(x, y,centro.x, centro.y);
-
-                if(distCentro <= raggioExt && distCentro >= raggioInt)
-                {
-                    ofPoint puntoBase;
-                    ofPoint puntoSasso;
-                    puntoBase.x = x;
-                    puntoBase.y = y;
-                    puntoBase.z = 0;
-                    puntoSasso.x = x;
-                    puntoSasso.y = y;
-                    puntoSasso.z = baseh + (distCentro * raggioh);
-
-                    shadow.push_back(puntoBase);
-                    cloud.push_back(puntoSasso);
-                }
-            }
-        }
-        basi.addVertices(shadow);
-        sassi.addVertices(cloud);
-        prevDistx = distx;
-        prevDisty = disty;
-        prevRaggioExt = raggioExt;
-        prevRaggioInt = raggioInt;
-        prevBaseh = baseh;
-        prevRaggioh = raggioh;
+        isChanged = true;
     }
 
-
+    // update point-cloud if necessary
+    updateCloud();
 }
 
 //--------------------------------------------------------------
@@ -181,19 +152,6 @@ void testApp::draw()
     if (showBasePoints)
     {
         // disegna punti di base
-        /*
-        ofSetCircleResolution(10);
-        ofSetColor(0,0,0,200);
-        ofSetLineWidth(0.25);
-        for(int i=0; i<shadow.size(); i++)
-        {
-            ofPushMatrix();
-            ofTranslate(shadow[i].x, shadow[i].y);
-            ofCircle(0, 0, shadowPointRadius);
-            ofPopMatrix();
-            //ofCircle(shadow[i].x, shadow[i].y, shadowPointRadius);
-        }
-        */
         ofSetColor(0,0,0,200);
         glPointSize(1);
         glEnable(GL_DEPTH_TEST);
@@ -206,45 +164,30 @@ void testApp::draw()
         // disegna steli
         ofSetColor(0,0,0,128);
         ofColor coloreSteli(0,0,0,128);
-        ofSetLineWidth(0.25);
-
-
+        ofSetLineWidth(0.1);
         for(int i=0; i<shadow.size(); i++)
         {
             ofPolyline steli;
             steli.addVertex(shadow[i]);
             steli.lineTo(cloud[i]);
+            //glEnable(GL_DEPTH_TEST);
             steli.draw();
+            //glDisable(GL_DEPTH_TEST);
             steli.clear();
-            //ofCircle(shadow[i].x, shadow[i].y, shadowPointRadius);
         }
     }
-
 
     if (showSassi)
     {
         // disegna sassi
-        /*
-        ofSetCircleResolution(10);
-        ofSetColor(255,255,255,200);
-        ofSetLineWidth(0.15);
-        for(int i=0; i<cloud.size(); i++)
-        {
-            ofPushMatrix();
-            ofTranslate(cloud[i].x, cloud[i].y, cloud[i].z);
-            ofCircle(0, 0, shadowPointRadius);
-            ofPopMatrix();
-        }
-        */
-        ofSetColor(255,255,255,200);
-        glPointSize(2);
+        ofSetColor(255,255,255,255);
+        ofFill();
+        glPointSize(3);
         glEnable(GL_DEPTH_TEST);
         sassi.drawVertices();
         glDisable(GL_DEPTH_TEST);
-
+        ofNoFill();
     }
-
-
 
     cam.end();
 
@@ -254,7 +197,6 @@ void testApp::draw()
     msg += "\nfps: " + ofToString(ofGetFrameRate(), 2);
     ofDrawBitmapString(msg, 10, ofGetHeight()-50);
 
-
     if (isSetup)
     {
         // draws gui
@@ -263,6 +205,67 @@ void testApp::draw()
 
 
 }
+
+
+
+//--------------------------------------------------------------
+void testApp::updateCloud()
+{
+
+    if (isChanged)
+    {
+        shadow.clear();
+        cloud.clear();
+        basi.clear();
+        sassi.clear();
+        for(float i=0; i<raggioExt*2; i += distx)
+        {
+            for(float j=0; j<raggioExt*2; j += disty)
+            {
+                float x = i-raggioExt;
+                float y = j-raggioExt;
+
+                float distCentro = ofDist(x, y,centro.x, centro.y);
+
+                if(distCentro <= raggioExt && distCentro >= raggioInt)
+                {
+                    ofPoint puntoBase;
+                    ofPoint puntoSasso;
+                    puntoBase.x = x;
+                    puntoBase.y = y;
+                    puntoBase.z = 0;
+                    puntoSasso.x = x;
+                    puntoSasso.y = y;
+                    float influenzaDistanzaCentro = ((distCentro * raggioh) * pow(influenzaRaggio, esponenteRaggio));
+                    float altezza = (baseh + influenzaDistanzaCentro/baseh);
+                    if(altezza < minh) {altezza = minh;}
+                    else if(altezza > maxh) {altezza = maxh;}
+                    puntoSasso.z = altezza;
+
+                    shadow.push_back(puntoBase);
+                    cloud.push_back(puntoSasso);
+                }
+            }
+        }
+        basi.addVertices(shadow);
+        sassi.addVertices(cloud);
+        prevDistx = distx;
+        prevDisty = disty;
+        prevRaggioExt = raggioExt;
+        prevRaggioInt = raggioInt;
+        prevBaseh = baseh;
+        prevRaggioh = raggioh;
+        prevEsponenteRaggio = esponenteRaggio;
+        prevInfluenzaRaggio = influenzaRaggio;
+        prevMinh = minh;
+        prevMaxh = maxh;
+
+        isChanged = false;
+    }
+
+}
+
+
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key)

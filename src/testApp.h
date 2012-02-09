@@ -19,6 +19,7 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+		void updateCloud();
 
 		ofEasyCam cam; // add mouse controls for camera movement
 
@@ -27,6 +28,7 @@ class testApp : public ofBaseApp{
 		float raggioInt;
 		float cameraDistance;
 
+        bool isChanged;
 
 		// gui elements
         bool showGui;
@@ -46,6 +48,8 @@ class testApp : public ofBaseApp{
         float baseh;
         float minh;
         float maxh;
+        float prevMinh;
+        float prevMaxh;
         float distx;
         float disty;
         float prevDistx;
@@ -55,6 +59,10 @@ class testApp : public ofBaseApp{
         float prevBaseh;
         float raggioh;
         float prevRaggioh;
+        float esponenteRaggio;
+        float prevEsponenteRaggio;
+        float influenzaRaggio;
+        float prevInfluenzaRaggio;
 
         float shadowPointRadius;
 
