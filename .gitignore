@@ -14,8 +14,11 @@
 CVS/
 .svn/
 
-/bin/projection_mapping*
-/bin/lpmt*
+bin/libs/
+obj/
+/obj/
+/bin/libs/
+/bin/round*
 /bin/data/_*.xml
 /bin/data/*red*.xml
 /bin/data/*green*.xml
