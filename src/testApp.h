@@ -38,6 +38,7 @@ class testApp : public ofBaseApp{
 		float raggioExt;
 		float raggioInt;
 		float cameraDistance;
+		float lunghezzaTotale;
 
         bool isChanged;
 

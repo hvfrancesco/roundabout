@@ -23,6 +23,8 @@ void testApp::setup()
     centro.y = 0.0;
     centro.z = 0.0;
 
+    lunghezzaTotale = 0.0;
+
     raggioRotonda = 15.75;
     raggioExt =  raggioRotonda-0.75;
     raggioInt = 10.0;
@@ -92,6 +94,7 @@ void testApp::setup()
                 puntoSasso.z = baseh;
                 shadow.push_back(puntoBase);
                 cloud.push_back(puntoSasso);
+                lunghezzaTotale += baseh;
             }
         }
     }
@@ -267,7 +270,8 @@ void testApp::draw()
     cam.end();
 
     ofSetColor(255);
-    string msg = string("numero elementi: ") + ofToString(shadow.size()) + "\n";
+    string msg = string("numero elementi: ") + ofToString(shadow.size());
+    msg += "  lunghezza totale steli: " + ofToString(lunghezzaTotale) + "\n";
     msg += string("Using mouse inputs to navigate ('g' to toggle): ") + (cam.getMouseInputEnabled() ? "YES" : "NO");
     msg += "\nfps: " + ofToString(ofGetFrameRate(), 2);
     ofDrawBitmapString(msg, 10, ofGetHeight()-50);
@@ -286,6 +290,7 @@ void testApp::updateCloud()
         cloud.clear();
         basi.clear();
         sassi.clear();
+        lunghezzaTotale = 0.0;
         for(float i=0; i<raggioExt*2; i += distx)
         {
             for(float j=0; j<raggioExt*2; j += disty)
@@ -315,6 +320,7 @@ void testApp::updateCloud()
                     else if(altezza > maxh) {altezza = maxh;}
                     puntoSasso.z = altezza;
 
+                    lunghezzaTotale += altezza;
                     shadow.push_back(puntoBase);
                     cloud.push_back(puntoSasso);
                 }
