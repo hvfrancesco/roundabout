@@ -14,6 +14,9 @@
 CVS/
 .svn/
 
+bin/roundabout
+/bin/roundabout
+.layout
 bin/libs/
 obj/
 /obj/

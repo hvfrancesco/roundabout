@@ -4,6 +4,9 @@
 //#include "ofxSimpleGuiToo.h"
 #include "ofxUI.h"
 #include "DepthExporter.h"
+#include <libnoise/noise.h>
+
+using namespace noise;
 
 class testApp : public ofBaseApp{
 
@@ -64,5 +67,9 @@ class testApp : public ofBaseApp{
         float esponenteRaggio;
         float influenzaRaggio;
         float shadowPointRadius;
+
+        module::Perlin rumore;
+        float intensRumore;
+        bool usaRumore;
 
 };

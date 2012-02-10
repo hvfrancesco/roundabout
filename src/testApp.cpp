@@ -36,6 +36,7 @@ void testApp::setup()
     raggioh = 0.0;
     esponenteRaggio = 1.0;
     influenzaRaggio = 0.0;
+    intensRumore = 0.0;
 
     // this sets the camera's distance from the object
     cam.setDistance(cameraDistance);
@@ -44,7 +45,7 @@ void testApp::setup()
 
     // GUI STUFF ---------------------------------------------------
 
-    gui = new ofxUICanvas(5,5,320,500);		//ofxUICanvas(float x, float y, float width, float height)
+    gui = new ofxUICanvas(5,5,320,ofGetHeight()-5);		//ofxUICanvas(float x, float y, float width, float height)
     gui->addWidgetDown(new ofxUILabel("rotonda Raucedo", OFX_UI_FONT_SMALL));
     gui->addWidgetDown(new ofxUISlider(304,10,5.0,25.0,raggioExt,"RAGGIO EXT"));
     gui->addWidgetDown(new ofxUISlider(304,10,0.0,24.0,raggioInt,"RAGGIO INT"));
@@ -59,6 +60,9 @@ void testApp::setup()
     gui->addWidgetDown(new ofxUILabel("spaziatura", OFX_UI_FONT_SMALL));
     gui->addWidgetDown(new ofxUISlider(304,10,0.0,0.5,distx,"SPAZ X"));
     gui->addWidgetDown(new ofxUISlider(304,10,0.0,0.5,disty,"SPAZ Y"));
+    gui->addWidgetDown(new ofxUILabel("rumore", OFX_UI_FONT_SMALL));
+    gui->addWidgetDown(new ofxUIToggle(20, 20, false, "USA RUMORE"));
+    gui->addWidgetDown(new ofxUISlider(304,10,0.0,1.0,intensRumore,"INTENS RUMORE"));
 
     ofAddListener(gui->newGUIEvent, this, &testApp::guiEvent);
 
@@ -164,6 +168,18 @@ void testApp::guiEvent(ofxUIEventArgs &e)
     {
         ofxUISlider *slider = (ofxUISlider *) e.widget;
         disty = slider->getScaledValue();
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "USA RUMORE")
+    {
+        ofxUIToggle *toggle = (ofxUIToggle *) e.widget;
+        usaRumore = toggle->getValue();
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "INTENS RUMORE")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        intensRumore = slider->getScaledValue();
         isChanged = true;
     }
 }
@@ -289,7 +305,12 @@ void testApp::updateCloud()
                     puntoSasso.x = x;
                     puntoSasso.y = y;
                     float influenzaDistanzaCentro = ((distCentro * raggioh) * pow(influenzaRaggio, esponenteRaggio));
-                    float altezza = (baseh + influenzaDistanzaCentro/baseh);
+                    float altezza = (baseh + influenzaDistanzaCentro*baseh);
+                    if(usaRumore)
+                    {
+                        double valoreRumore = rumore.GetValue(x,y,altezza);
+                        altezza = altezza + altezza * valoreRumore * intensRumore;
+                    }
                     if(altezza < minh) {altezza = minh;}
                     else if(altezza > maxh) {altezza = maxh;}
                     puntoSasso.z = altezza;
