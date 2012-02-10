@@ -71,6 +71,8 @@ class testApp : public ofBaseApp{
 
         module::Perlin rumore;
         float intensRumore;
+        int ottaveRumore;
+        float freqRumore;
         bool usaRumore;
 
 };

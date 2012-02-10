@@ -39,6 +39,8 @@ void testApp::setup()
     esponenteRaggio = 1.0;
     influenzaRaggio = 0.0;
     intensRumore = 0.0;
+    ottaveRumore = 6;
+    freqRumore = 1.0;
 
     // this sets the camera's distance from the object
     cam.setDistance(cameraDistance);
@@ -65,6 +67,8 @@ void testApp::setup()
     gui->addWidgetDown(new ofxUILabel("rumore", OFX_UI_FONT_SMALL));
     gui->addWidgetDown(new ofxUIToggle(20, 20, false, "USA RUMORE"));
     gui->addWidgetDown(new ofxUISlider(304,10,0.0,1.0,intensRumore,"INTENS RUMORE"));
+    gui->addWidgetDown(new ofxUISlider(304,10,1,6,ottaveRumore,"COMPL RUMORE"));
+    gui->addWidgetDown(new ofxUISlider(304,10,1.0,16.0,freqRumore,"FREQ RUMORE"));
 
     ofAddListener(gui->newGUIEvent, this, &testApp::guiEvent);
 
@@ -185,6 +189,20 @@ void testApp::guiEvent(ofxUIEventArgs &e)
         intensRumore = slider->getScaledValue();
         isChanged = true;
     }
+    else if(e.widget->getName() == "COMPL RUMORE")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        ottaveRumore = slider->getScaledValue();
+        rumore.SetOctaveCount(ottaveRumore);
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "FREQ RUMORE")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        freqRumore = slider->getScaledValue();
+        rumore.SetFrequency(freqRumore);
+        isChanged = true;
+    }
 }
 
 
@@ -271,7 +289,8 @@ void testApp::draw()
 
     ofSetColor(255);
     string msg = string("numero elementi: ") + ofToString(shadow.size());
-    msg += "  lunghezza totale steli: " + ofToString(lunghezzaTotale) + "\n";
+    msg += "  lunghezza totale steli: " + ofToString(lunghezzaTotale) + " m\n";
+    msg += "peso totale acciaio: phi6 " + ofToString(lunghezzaTotale * 0.222) + " Kg (" + ofToString(lunghezzaTotale * 0.222 * 1.7) +" euro) / phi8 "  + ofToString(lunghezzaTotale * 0.395) + " Kg (" + ofToString(lunghezzaTotale * 0.395 * 1.7) + " euro)\n";
     msg += string("Using mouse inputs to navigate ('g' to toggle): ") + (cam.getMouseInputEnabled() ? "YES" : "NO");
     msg += "\nfps: " + ofToString(ofGetFrameRate(), 2);
     ofDrawBitmapString(msg, 10, ofGetHeight()-50);
