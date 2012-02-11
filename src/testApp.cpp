@@ -73,7 +73,7 @@ void testApp::setup()
     gui->addWidgetDown(new ofxUIToggle(10, 10, false, "USA RUMORE"));
     gui->addWidgetDown(new ofxUISlider(304,8,0.0,1.0,intensRumore,"INTENS RUMORE"));
     gui->addWidgetDown(new ofxUISlider(304,8,1,6,ottaveRumore,"COMPL RUMORE"));
-    gui->addWidgetDown(new ofxUISlider(304,8,1.0,16.0,freqRumore,"FREQ RUMORE"));
+    gui->addWidgetDown(new ofxUISlider(304,8,0.0,16.0,freqRumore,"FREQ RUMORE"));
 
     ofAddListener(gui->newGUIEvent, this, &testApp::guiEvent);
 
