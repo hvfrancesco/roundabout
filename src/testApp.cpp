@@ -34,6 +34,8 @@ void testApp::setup()
     maxh = 4.0;
     distx = 0.5;
     disty = 0.5;
+    startAngle = 0.0;
+    stopAngle = 360.0;
     shadowPointRadius = 0.02;
     raggioh = 0.0;
     esponenteRaggio = 1.0;
@@ -49,26 +51,29 @@ void testApp::setup()
 
     // GUI STUFF ---------------------------------------------------
 
-    gui = new ofxUICanvas(5,5,320,ofGetHeight()-5);		//ofxUICanvas(float x, float y, float width, float height)
+    gui = new ofxUICanvas(5,5,320,ofGetHeight()-10);		//ofxUICanvas(float x, float y, float width, float height)
+    gui->setFontSize(OFX_UI_FONT_SMALL, 5);
     gui->addWidgetDown(new ofxUILabel("rotonda Raucedo", OFX_UI_FONT_SMALL));
-    gui->addWidgetDown(new ofxUISlider(304,10,5.0,25.0,raggioExt,"RAGGIO EXT"));
-    gui->addWidgetDown(new ofxUISlider(304,10,0.0,24.0,raggioInt,"RAGGIO INT"));
-    gui->addWidgetDown(new ofxUISlider(304,10,5.0,250.0,cameraDistance,"CAMERA DIST"));
-    gui->addWidgetDown(new ofxUISlider(304,10,0.0,10.0,baseh,"BASEH"));
-    gui->addWidgetDown(new ofxUISlider(304,10,0.0,1.0,minh,"HMIN"));
-    gui->addWidgetDown(new ofxUISlider(304,10,0.0,5.0,maxh,"HMAX"));
+    gui->addWidgetDown(new ofxUISlider(304,8,5.0,25.0,raggioExt,"RAGGIO EXT"));
+    gui->addWidgetDown(new ofxUISlider(304,8,0.0,24.0,raggioInt,"RAGGIO INT"));
+    gui->addWidgetDown(new ofxUISlider(304,8,5.0,250.0,cameraDistance,"CAMERA DIST"));
+    gui->addWidgetDown(new ofxUISlider(304,8,0.0,10.0,baseh,"BASEH"));
+    gui->addWidgetDown(new ofxUISlider(304,8,0.0,1.0,minh,"HMIN"));
+    gui->addWidgetDown(new ofxUISlider(304,8,0.0,5.0,maxh,"HMAX"));
     gui->addWidgetDown(new ofxUILabel("distanza dal centro", OFX_UI_FONT_SMALL));
-    gui->addWidgetDown(new ofxUISlider(304,10,-1.0,1.0,raggioh,"INFLU RAGGIO"));
-    gui->addWidgetDown(new ofxUISlider(304,10,-3.0,3.0,esponenteRaggio,"EXP"));
-    gui->addWidgetDown(new ofxUISlider(304,10,0.0,1.0,influenzaRaggio,"INTENS RAGGIO"));
+    gui->addWidgetDown(new ofxUISlider(304,8,-1.0,1.0,raggioh,"INFLU RAGGIO"));
+    gui->addWidgetDown(new ofxUISlider(304,8,-3.0,3.0,esponenteRaggio,"EXP"));
+    gui->addWidgetDown(new ofxUISlider(304,8,0.0,1.0,influenzaRaggio,"INTENS RAGGIO"));
     gui->addWidgetDown(new ofxUILabel("spaziatura", OFX_UI_FONT_SMALL));
-    gui->addWidgetDown(new ofxUISlider(304,10,0.0,0.5,distx,"SPAZ X"));
-    gui->addWidgetDown(new ofxUISlider(304,10,0.0,0.5,disty,"SPAZ Y"));
+    gui->addWidgetDown(new ofxUISlider(304,8,0.0,1.0,distx,"SPAZ X"));
+    gui->addWidgetDown(new ofxUISlider(304,8,0.0,1.0,disty,"SPAZ Y"));
+    gui->addWidgetDown(new ofxUISlider(304,8,0.0,360.0,startAngle,"ANGOLO INIZIO"));
+    gui->addWidgetDown(new ofxUISlider(304,8,0.0,360.0,stopAngle,"ANGOLO FINE"));
     gui->addWidgetDown(new ofxUILabel("rumore", OFX_UI_FONT_SMALL));
-    gui->addWidgetDown(new ofxUIToggle(20, 20, false, "USA RUMORE"));
-    gui->addWidgetDown(new ofxUISlider(304,10,0.0,1.0,intensRumore,"INTENS RUMORE"));
-    gui->addWidgetDown(new ofxUISlider(304,10,1,6,ottaveRumore,"COMPL RUMORE"));
-    gui->addWidgetDown(new ofxUISlider(304,10,1.0,16.0,freqRumore,"FREQ RUMORE"));
+    gui->addWidgetDown(new ofxUIToggle(10, 10, false, "USA RUMORE"));
+    gui->addWidgetDown(new ofxUISlider(304,8,0.0,1.0,intensRumore,"INTENS RUMORE"));
+    gui->addWidgetDown(new ofxUISlider(304,8,1,6,ottaveRumore,"COMPL RUMORE"));
+    gui->addWidgetDown(new ofxUISlider(304,8,1.0,16.0,freqRumore,"FREQ RUMORE"));
 
     ofAddListener(gui->newGUIEvent, this, &testApp::guiEvent);
 
@@ -79,6 +84,7 @@ void testApp::setup()
 
     shadow.clear();
     cloud.clear();
+    origine.set(raggioExt, centro.y, 0);
     for(float i=0; i<raggioExt*2; i += distx)
     {
         for(float j=0; j<raggioExt*2; j += disty)
@@ -96,6 +102,9 @@ void testApp::setup()
                 puntoSasso.x = x;
                 puntoSasso.y = y;
                 puntoSasso.z = baseh;
+                float angolo;
+                angolo = (puntoBase-centro).angle(origine-centro);
+                if(puntoBase.y < 0) angolo = 360.0 - angolo;
                 shadow.push_back(puntoBase);
                 cloud.push_back(puntoSasso);
                 lunghezzaTotale += baseh;
@@ -175,6 +184,28 @@ void testApp::guiEvent(ofxUIEventArgs &e)
     {
         ofxUISlider *slider = (ofxUISlider *) e.widget;
         disty = slider->getScaledValue();
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "ANGOLO INIZIO")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        startAngle = slider->getScaledValue();
+        if(startAngle > stopAngle)
+        {
+            startAngle = stopAngle;
+            slider->setValue(startAngle);
+        }
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "ANGOLO FINE")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        stopAngle = slider->getScaledValue();
+        if(stopAngle < startAngle)
+        {
+            stopAngle = startAngle;
+            slider->setValue(stopAngle);
+        }
         isChanged = true;
     }
     else if(e.widget->getName() == "USA RUMORE")
@@ -310,6 +341,7 @@ void testApp::updateCloud()
         basi.clear();
         sassi.clear();
         lunghezzaTotale = 0.0;
+        origine.set(raggioExt, centro.y, 0);
         for(float i=0; i<raggioExt*2; i += distx)
         {
             for(float j=0; j<raggioExt*2; j += disty)
@@ -326,6 +358,11 @@ void testApp::updateCloud()
                     puntoBase.x = x;
                     puntoBase.y = y;
                     puntoBase.z = 0;
+                    float angolo;
+                    angolo = (puntoBase-centro).angle(origine-centro);
+                    if(puntoBase.y < 0) angolo = 360.0 - angolo;
+                    if(angolo >= startAngle && angolo <= stopAngle)
+                    {
                     puntoSasso.x = x;
                     puntoSasso.y = y;
                     float influenzaDistanzaCentro = ((distCentro * raggioh) * pow(influenzaRaggio, esponenteRaggio));
@@ -342,6 +379,7 @@ void testApp::updateCloud()
                     lunghezzaTotale += altezza;
                     shadow.push_back(puntoBase);
                     cloud.push_back(puntoSasso);
+                    }
                 }
             }
         }

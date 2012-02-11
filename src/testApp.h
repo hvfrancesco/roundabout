@@ -56,6 +56,7 @@ class testApp : public ofBaseApp{
         ofMesh basi;
 
         ofPoint centro;
+        ofPoint origine;
         vector <ofPoint> cloud;
         vector <ofPoint> shadow;
 
@@ -68,6 +69,8 @@ class testApp : public ofBaseApp{
         float esponenteRaggio;
         float influenzaRaggio;
         float shadowPointRadius;
+        float startAngle;
+        float stopAngle;
 
         module::Perlin rumore;
         float intensRumore;
