@@ -44,6 +44,9 @@ void testApp::setup()
     ottaveRumore = 6;
     freqRumore = 1.0;
 
+    spessoreScavo = 0.35;
+    costoTotale = 0.0;
+
     // this sets the camera's distance from the object
     cam.setDistance(cameraDistance);
 
@@ -111,6 +114,7 @@ void testApp::setup()
             }
         }
     }
+    areaScavo = ((raggioExt*raggioExt*PI)-(raggioInt*raggioInt*PI))/360*(stopAngle-startAngle);
     basi.addVertices(shadow);
     sassi.addVertices(cloud);
 
@@ -248,6 +252,7 @@ void testApp::update()
 
     // update point-cloud if necessary
     updateCloud();
+    costoTotale = calcoloCosti();
 }
 
 //--------------------------------------------------------------
@@ -322,9 +327,11 @@ void testApp::draw()
     string msg = string("numero elementi: ") + ofToString(shadow.size());
     msg += "  lunghezza totale steli: " + ofToString(lunghezzaTotale) + " m\n";
     msg += "peso totale acciaio: phi6 " + ofToString(lunghezzaTotale * 0.222) + " Kg (" + ofToString(lunghezzaTotale * 0.222 * 1.7) +" euro) / phi8 "  + ofToString(lunghezzaTotale * 0.395) + " Kg (" + ofToString(lunghezzaTotale * 0.395 * 1.7) + " euro)\n";
+    msg += "area occupata: " + ofToString(areaScavo) + " mq" + " - Volume scavo: " + ofToString(areaScavo*spessoreScavo) + " mc" + "\n";
+    msg += "costo totale: " + ofToString(costoTotale) + " euro\n";
     msg += string("Using mouse inputs to navigate ('g' to toggle): ") + (cam.getMouseInputEnabled() ? "YES" : "NO");
     msg += "\nfps: " + ofToString(ofGetFrameRate(), 2);
-    ofDrawBitmapString(msg, 10, ofGetHeight()-50);
+    ofDrawBitmapString(msg, 10, ofGetHeight()-70);
 
 }
 
@@ -383,6 +390,8 @@ void testApp::updateCloud()
                 }
             }
         }
+        areaScavo = ((raggioExt*raggioExt*PI)-(raggioInt*raggioInt*PI))/360*(stopAngle-startAngle);
+
         basi.addVertices(shadow);
         sassi.addVertices(cloud);
 
@@ -407,6 +416,32 @@ void testApp::esportaFile()
     esporta.exportSassi(ofToString("roundabout.pcd"), cloud);
     esporta.exportSassi(ofToString("roundabout.csv"), cloud);
 }
+
+
+//--------------------------------------------------------------
+
+float testApp::calcoloCosti()
+{
+    float nSteli = shadow.size();
+    float volumeScavo = (areaScavo*spessoreScavo);
+    float volumeFondaz = nSteli*0.15*0.20*disty;
+    float volumeStabiliz = areaScavo*0.1;
+    float volumeTerra = volumeScavo-volumeFondaz-volumeStabiliz;
+    float ferroFondaz = nSteli*disty*4*0.395;
+
+    float costo = 0.0;
+    costo += (lunghezzaTotale * 0.222 * 1.7); // steli
+    costo += (float)(nSteli/1000)*24.00; // ciottoli
+    costo += volumeScavo * 15.86; // scavo sbancamento
+    costo += volumeStabiliz * 31.65; // stabilizzato
+    costo += volumeFondaz*180.00; // cls fondaz
+    costo += ferroFondaz*1.7; // ferro fondazioni
+    costo += volumeTerra*36.67; // terra riporto
+    costo += nSteli*0.5; // manodopera sassi
+
+    return costo;
+}
+
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key)

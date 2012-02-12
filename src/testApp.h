@@ -31,6 +31,7 @@ class testApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		void updateCloud();
 		void esportaFile();
+		float calcoloCosti();
 
 		ofEasyCam cam; // add mouse controls for camera movement
 
@@ -71,6 +72,10 @@ class testApp : public ofBaseApp{
         float shadowPointRadius;
         float startAngle;
         float stopAngle;
+
+        float areaScavo;
+        float spessoreScavo;
+        float costoTotale;
 
         module::Perlin rumore;
         float intensRumore;
