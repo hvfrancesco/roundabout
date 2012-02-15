@@ -431,7 +431,8 @@ float testApp::calcoloCosti()
 
     float costo = 0.0;
     costo += (lunghezzaTotale * 0.222 * 1.7); // steli
-    costo += (float)(nSteli/1000)*24.00; // ciottoli
+    costo += (float)(nSteli/1000)*24.00; // ciottoli su steli
+    costo += (((raggioInt*raggioInt*PI)/(0.1*0.1))/1000)*24.00; // ciottoli al centro
     costo += volumeScavo * 15.86; // scavo sbancamento
     costo += volumeStabiliz * 31.65; // stabilizzato
     costo += volumeFondaz*180.00; // cls fondaz
