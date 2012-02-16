@@ -36,6 +36,8 @@ void testApp::setup()
     disty = 0.5;
     startAngle = 0.0;
     stopAngle = 360.0;
+    startAngleValue = 1.0;
+    stopAngleValue = 1.0;
     shadowPointRadius = 0.02;
     raggioh = 0.0;
     esponenteRaggio = 1.0;
@@ -72,6 +74,8 @@ void testApp::setup()
     gui->addWidgetDown(new ofxUISlider(304,8,0.0,1.0,disty,"SPAZ Y"));
     gui->addWidgetDown(new ofxUISlider(304,8,0.0,360.0,startAngle,"ANGOLO INIZIO"));
     gui->addWidgetDown(new ofxUISlider(304,8,0.0,360.0,stopAngle,"ANGOLO FINE"));
+    gui->addWidgetDown(new ofxUISlider(304,8,-1.0,1.0,startAngleValue,"VALORE INIZIO"));
+    gui->addWidgetDown(new ofxUISlider(304,8,-1.0,1.0,stopAngleValue,"VALORE FINE"));
     gui->addWidgetDown(new ofxUILabel("rumore", OFX_UI_FONT_SMALL));
     gui->addWidgetDown(new ofxUIToggle(10, 10, false, "USA RUMORE"));
     gui->addWidgetDown(new ofxUISlider(304,8,0.0,1.0,intensRumore,"INTENS RUMORE"));
@@ -210,6 +214,18 @@ void testApp::guiEvent(ofxUIEventArgs &e)
             stopAngle = startAngle;
             slider->setValue(stopAngle);
         }
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "VALORE INIZIO")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        startAngleValue = slider->getScaledValue();
+        isChanged = true;
+    }
+    else if(e.widget->getName() == "VALORE FINE")
+    {
+        ofxUISlider *slider = (ofxUISlider *) e.widget;
+        stopAngleValue = slider->getScaledValue();
         isChanged = true;
     }
     else if(e.widget->getName() == "USA RUMORE")
@@ -374,6 +390,7 @@ void testApp::updateCloud()
                     puntoSasso.y = y;
                     float influenzaDistanzaCentro = ((distCentro * raggioh) * pow(influenzaRaggio, esponenteRaggio));
                     float altezza = (baseh + influenzaDistanzaCentro*baseh);
+                    altezza *= (startAngleValue*(1-angolo/360)+stopAngleValue*angolo/360);
                     if(usaRumore)
                     {
                         double valoreRumore = rumore.GetValue(x,y,altezza);

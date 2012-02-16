@@ -72,6 +72,8 @@ class testApp : public ofBaseApp{
         float shadowPointRadius;
         float startAngle;
         float stopAngle;
+        float startAngleValue;
+        float stopAngleValue;
 
         float areaScavo;
         float spessoreScavo;
