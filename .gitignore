@@ -23,6 +23,7 @@ obj/
 /bin/libs/
 /bin/round*
 /bin/data/_*.xml
+/bin/data/*.txt
 /bin/data/*red*.xml
 /bin/data/*green*.xml
 /bin/data/*blu*.xml

@@ -466,6 +466,7 @@ void testApp::esportaFile()
 
     esporta.exportSassi(ofToString("roundabout.pcd"), cloud);
     esporta.exportSassi(ofToString("roundabout.csv"), cloud);
+    esporta.exportComputo(ofToString("roundabout_computo.txt"), cloud, areaScavo, spessoreScavo, disty, raggioExt, raggioInt, lunghezzaTotale);
 }
 
 
@@ -482,8 +483,8 @@ float testApp::calcoloCosti()
 
     float costo = 0.0;
     costo += (lunghezzaTotale * 0.222 * 1.7); // steli
-    costo += (float)(nSteli/1000)*24.00; // ciottoli su steli
-    costo += (((raggioInt*raggioInt*PI)/(0.1*0.1))/1000)*24.00; // ciottoli al centro
+    costo += (float)(nSteli/1000)*22.00; // ciottoli su steli
+    costo += (((raggioInt*raggioInt*PI)/(0.1*0.1))/1000)*22.00; // ciottoli al centro
     costo += volumeScavo * 15.86; // scavo sbancamento
     costo += volumeStabiliz * 31.65; // stabilizzato
     costo += volumeFondaz*180.00; // cls fondaz
