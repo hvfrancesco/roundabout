@@ -15,6 +15,7 @@ void testApp::setup()
     showBasePoints = true;
     showSassi = true;
     showSteli = true;
+    showSassiCentro = false;
 
     ofSetCircleResolution(100);
     ofEnableSmoothing();
@@ -91,6 +92,7 @@ void testApp::setup()
 
     shadow.clear();
     cloud.clear();
+    cloudCentro.clear();
     origine.set(raggioExt, centro.y, 0);
     for(float i=0; i<raggioExt*2; i += distx)
     {
@@ -116,11 +118,20 @@ void testApp::setup()
                 cloud.push_back(puntoSasso);
                 lunghezzaTotale += baseh;
             }
+            else if((ofDist(x, y,centro.x, centro.y) <= raggioExt) && (ofDist(x, y,centro.x, centro.y) < raggioInt))
+            {
+                ofPoint puntoSasso;
+                puntoSasso.x = x;
+                puntoSasso.y = y;
+                puntoSasso.z = 0;
+                cloudCentro.push_back(puntoSasso);
+            }
         }
     }
     areaScavo = ((raggioExt*raggioExt*PI)-(raggioInt*raggioInt*PI))/360*(stopAngle-startAngle);
     basi.addVertices(shadow);
     sassi.addVertices(cloud);
+    sassiCentro.addVertices(cloudCentro);
 
     ofBackground(120,100,100);
 }
@@ -307,6 +318,18 @@ void testApp::draw()
         glDisable(GL_DEPTH_TEST);
     }
 
+    if (showSassiCentro)
+    {
+        // disegna sassi
+        ofSetColor(255,255,255,255);
+        ofFill();
+        glPointSize(3);
+        glEnable(GL_DEPTH_TEST);
+        sassiCentro.drawVertices();
+        glDisable(GL_DEPTH_TEST);
+        ofNoFill();
+    }
+
     if (showSteli)
     {
         // disegna steli
@@ -361,8 +384,10 @@ void testApp::updateCloud()
     {
         shadow.clear();
         cloud.clear();
+        cloudCentro.clear();
         basi.clear();
         sassi.clear();
+        sassiCentro.clear();
         lunghezzaTotale = 0.0;
         origine.set(raggioExt, centro.y, 0);
         for(float i=0; i<raggioExt*2; i += distx)
@@ -405,12 +430,21 @@ void testApp::updateCloud()
                     cloud.push_back(puntoSasso);
                     }
                 }
+            else if(distCentro <= raggioExt && distCentro < raggioInt)
+            {
+                ofPoint puntoSasso;
+                puntoSasso.x = x;
+                puntoSasso.y = y;
+                puntoSasso.z = 0;
+                cloudCentro.push_back(puntoSasso);
+            }
             }
         }
         areaScavo = ((raggioExt*raggioExt*PI)-(raggioInt*raggioInt*PI))/360*(stopAngle-startAngle);
 
         basi.addVertices(shadow);
         sassi.addVertices(cloud);
+        sassiCentro.addVertices(cloudCentro);
 
         isChanged = false;
     }
@@ -492,6 +526,10 @@ void testApp::keyPressed(int key)
 
     case 's':
         showSassi = !showSassi;
+        break;
+
+    case 'S':
+        showSassiCentro = !showSassiCentro;
         break;
 
     case 'a':

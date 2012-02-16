@@ -50,16 +50,19 @@ class testApp : public ofBaseApp{
         bool showBasePoints;
         bool showSassi;
         bool showSteli;
+        bool showSassiCentro;
 
         DepthExporter esporta;
 
         ofMesh sassi;
         ofMesh basi;
+        ofMesh sassiCentro;
 
         ofPoint centro;
         ofPoint origine;
         vector <ofPoint> cloud;
         vector <ofPoint> shadow;
+        vector <ofPoint> cloudCentro;
 
         float baseh;
         float minh;
